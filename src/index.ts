@@ -12,7 +12,7 @@ export interface Env {
     API_SECRET_KEY: string;
 }
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.0.1";
 const LAST_UPDATED = "2025-12-09";
 
 interface StandardResponse {

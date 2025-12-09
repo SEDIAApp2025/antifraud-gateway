@@ -26,6 +26,11 @@ npm install
  - `npx wrangler deploy` publishes the gateway defined by `src/index.ts` to the Cloudflare account.
  - The project currently uses the Cloudflare Worker runtime defined in `wrangler.toml`.
 
+### Tag-driven deployment (CI/CD)
+- Create a release tag (e.g., `git tag v1.0.0`) and push it (`git push origin --tags`).
+- The CI/CD pipeline watches for tags and will build + deploy the Worker automatically so the latest gateway version lives at the configured Cloudflare route.
+- Tag names should reflect the version or milestone so it’s clear what the frontend is hitting during integration testing.
+
 ### API routes (prefixed with `/api`)
  - `GET /api/version` returns the gateway version metadata.
  - `GET /api/check-fraud?url=<target>` runs the placeholder fraud detection logic.
