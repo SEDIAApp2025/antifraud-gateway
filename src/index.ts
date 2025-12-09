@@ -26,6 +26,7 @@ export default {
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
         const url = new URL(request.url);
         const pathname = url.pathname;
+        const API_PREFIX = "/api";
 
         // --- A. CORS 設定 ---
         // 允許 Android Studio 或瀏覽器跨網域存取
@@ -47,7 +48,7 @@ export default {
         const validKey = env.API_SECRET_KEY;
 
         // Whitelist paths (no authentication required)
-        const isPublicPath = pathname === "/" || pathname === "/version";
+        const isPublicPath = pathname === "/" || pathname === `${API_PREFIX}/version`;
 
         // Authentication failure conditions: path is not public AND (no key or key is invalid)
         if (!isPublicPath && (!clientKey || clientKey !== validKey)) {
@@ -64,7 +65,7 @@ export default {
         // --- C. Routing ---
 
         // 1. Version Check API
-        if (pathname === "/version") {
+        if (pathname === `${API_PREFIX}/version`) {
             return successResponse({
                 app_name: "Antifraud Gateway",
                 version: APP_VERSION,
@@ -75,7 +76,7 @@ export default {
 
         // 2. Fraud Detection API
         // Usage: /check-fraud?url=http://example.com
-        if (pathname === "/check-fraud") {
+        if (pathname === `${API_PREFIX}/check-fraud`) {
             const targetUrl = url.searchParams.get("url");
 
             if (!targetUrl) {
@@ -99,7 +100,7 @@ export default {
 
         // 3. CSV Data API
         // Usage: /data
-        if (pathname === "/data") {
+        if (pathname === `${API_PREFIX}/data`) {
             // Place your CSV data here (simulated)
             // Note: For large data, consider fetching from GitHub Raw URL
             const csvContent = `id,source_number,category,description
@@ -113,7 +114,7 @@ export default {
         }
 
         // 4. Default Response (404)
-        return errorResponse("Route not found. Try /version", corsHeaders, 404);
+        return errorResponse(`Route not found. Try ${API_PREFIX}/version`, corsHeaders, 404);
     },
 };
 
