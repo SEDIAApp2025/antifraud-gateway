@@ -9,15 +9,13 @@ export class AiCheck extends OpenAPIRoute {
     tags: ["AI Check"],
     summary: "AI Fraud Check",
     requestBody: {
-        description: "Text content to analyze (Max 200 characters)",
+        description: `Raw text content to analyze (Max ${MAX_CONTENT_LENGTH} characters)`,
         content: {
-            "application/json": {
+            "text/plain": {
                 schema: {
-                    type: "object",
-                    properties: {
-                        content: { type: "string", example: "恭喜您中獎了，請點擊連結領取", maxLength: 200 }
-                    },
-                    required: ["content"]
+                    type: "string",
+                    maxLength: MAX_CONTENT_LENGTH,
+                    example: "恭喜您中獎了，請點擊連結領取"
                 }
             }
         }
@@ -39,10 +37,10 @@ export class AiCheck extends OpenAPIRoute {
   };
 
   async handle(request: Request, env: any, ctx: any, data: Record<string, any>) {
-    const { content } = data.body;
+    const content = data.body;
 
-    if (!content) {
-        return errorResponse("Content is required", 400);
+    if (!content || typeof content !== 'string') {
+        return errorResponse("Content is required and must be text/plain", 400);
     }
 
     if (content.length > MAX_CONTENT_LENGTH) {
