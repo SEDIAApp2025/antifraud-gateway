@@ -1,4 +1,6 @@
 {
+  "name": "antifraud-gateway",
+  "version": "2.0.0",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
