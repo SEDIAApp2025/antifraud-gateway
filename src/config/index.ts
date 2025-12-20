@@ -1,4 +1,6 @@
-export const APP_VERSION = "2.0.0";
+import pkg from "../../package.json";
+
+export const APP_VERSION = pkg.version;
 export const LAST_UPDATED = "2025-12-20";
 
 export interface Env {
