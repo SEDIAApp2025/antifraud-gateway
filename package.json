@@ -1,10 +1,16 @@
 {
   "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "test": "echo \"Error: no test specified\" && exit 1",
     "check": "tsc --noEmit"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251209.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@cloudflare/itty-router-openapi": "^1.1.1",
+    "itty-router": "^5.0.22"
   }
 }

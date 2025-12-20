@@ -1,3 +1,11 @@
 name = "antifraud-gateway"
 main = "src/index.ts"
 compatibility_date = "2025-12-09"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.csv"]
+fallthrough = true
+
+[ai]
+binding = "AI"
