@@ -1,6 +1,7 @@
 import { OpenAPIRoute, Str } from "@cloudflare/itty-router-openapi";
 import { RiskLevel } from "../types";
 import { successResponse, errorResponse } from "../utils/response";
+import { parseAiResponse } from "../utils/ai";
 
 const MAX_CONTENT_LENGTH = 200;
 
@@ -9,16 +10,11 @@ export class AiCheck extends OpenAPIRoute {
     tags: ["AI Check"],
     summary: "AI Fraud Check",
     requestBody: {
-        description: `Raw text content to analyze (Max ${MAX_CONTENT_LENGTH} characters)`,
-        content: {
-            "text/plain": {
-                schema: {
-                    type: "string",
-                    maxLength: MAX_CONTENT_LENGTH,
-                    example: "恭喜您中獎了，請點擊連結領取"
-                }
-            }
-        }
+        text: new Str({
+            required: true,
+            description: `Text content to analyze (Max ${MAX_CONTENT_LENGTH} characters)`,
+            example: "恭喜您中獎了，請點擊連結領取..."
+        })
     },
     responses: {
       "200": {
@@ -37,13 +33,13 @@ export class AiCheck extends OpenAPIRoute {
   };
 
   async handle(request: Request, env: any, ctx: any, data: Record<string, any>) {
-    const content = data.body;
+    const { text } = data.body;
 
-    if (!content || typeof content !== 'string') {
-        return errorResponse("Content is required and must be text/plain", 400);
+    if (!text) {
+        return errorResponse("Text content is required", 400);
     }
 
-    if (content.length > MAX_CONTENT_LENGTH) {
+    if (text.length > MAX_CONTENT_LENGTH) {
         return errorResponse(`Content exceeds maximum length of ${MAX_CONTENT_LENGTH} characters`, 400);
     }
 
@@ -57,31 +53,18 @@ export class AiCheck extends OpenAPIRoute {
                 - "description": A brief explanation of the risk in Traditional Chinese (繁體中文).
                 - "suggestion": Advice for the user in Traditional Chinese (繁體中文).` 
             },
-            { role: "user", content: content }
+            { role: "user", content: text }
         ];
 
         const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
             messages,
         });
         
-        let aiResult;
-        try {
-            // Clean up potential markdown code blocks if the model adds them
-            const rawResponse = (response as any).response.replace(/```json/g, "").replace(/```/g, "").trim();
-            aiResult = JSON.parse(rawResponse);
-        } catch (e) {
-            console.error("AI JSON Parse Error:", e, (response as any).response);
-            aiResult = {
-                riskLevel: RiskLevel.UNKNOWN,
-                description: "AI 回應格式錯誤",
-                suggestion: "請自行判斷訊息真偽",
-                raw: (response as any).response
-            };
-        }
+        const aiResult = parseAiResponse(response);
 
         return successResponse({
             riskLevel: aiResult.riskLevel || RiskLevel.UNKNOWN,
-            description: aiResult.description || aiResult.reason || "Analysis complete",
+            description: aiResult.description || "Analysis complete",
             suggestion: aiResult.suggestion || "No suggestion provided"
         });
 
