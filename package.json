@@ -1,6 +1,6 @@
 {
   "name": "antifraud-gateway",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "scripts": {
     "gen:metadata": "node scripts/update-metadata.js",
     "version": "npm run gen:metadata && git add src/config/index.ts",
