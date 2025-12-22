@@ -53,16 +53,20 @@ npm install
 This project uses **Tag-driven** GitHub Actions for automated deployment. Pushing to `main` does **not** trigger a deployment to production.
 
 ### How to Deploy (Tag-driven)
-To deploy a new version to Cloudflare, you must push a git tag:
+To deploy a new version to Cloudflare, use `npm version` to manage versioning and tagging automatically:
 
 1.  **Commit your changes** to the `main` branch.
-2.  **Create a release tag** (e.g., `v1.0.1`):
+2.  **Bump version and create tag** (choose one):
     ```bash
-    git tag v1.0.1
+    npm version patch  # For bug fixes (e.g., 1.0.0 -> 1.0.1)
+    npm version minor  # For new features (e.g., 1.0.0 -> 1.1.0)
+    npm version major  # For breaking changes (e.g., 1.0.0 -> 2.0.0)
     ```
-3.  **Push the tag** to GitHub:
+    *This command will automatically update `package.json`, update the `LAST_UPDATED` date in `src/config/index.ts`, commit the changes, and create a git tag.*
+
+3.  **Push to GitHub**:
     ```bash
-    git push origin v1.0.1
+    git push origin main --tags
     ```
 
 The CI/CD pipeline will detect the new tag, build the worker, and deploy it automatically.

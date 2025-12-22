@@ -10,6 +10,7 @@ import { Env } from "./config";
 
 export const router = OpenAPIRouter({
   docs_url: "/api/docs",
+  openapi_url: "/api/openapi.json",
   schema: {
     info: {
       title: "Antifraud Gateway API",
