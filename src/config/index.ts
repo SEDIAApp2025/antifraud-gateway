@@ -1,7 +1,7 @@
 import pkg from "../../package.json";
 
 export const APP_VERSION = pkg.version;
-export const LAST_UPDATED = "2025-12-22";
+export const LAST_UPDATED = "2025-12-27";
 
 export interface Env {
     API_SECRET_KEY: string;
